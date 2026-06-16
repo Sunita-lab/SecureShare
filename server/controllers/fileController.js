@@ -128,3 +128,63 @@ exports.downloadFile = async (req, res) => {
     res.status(500).json({ message: 'Download failed', error: err.message });
   }
 };
+
+// User ki saari files
+exports.getMyFiles = async (req, res) => {
+  try {
+    const files = await File.find({ uploadedBy: req.user.id }).sort({ createdAt: -1 });
+    res.json({ files });
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching files', error: err.message });
+  }
+};
+
+// File delete karo
+exports.deleteFile = async (req, res) => {
+  try {
+    const file = await File.findOne({ _id: req.params.fileId, uploadedBy: req.user.id });
+    if (!file) return res.status(404).json({ message: 'File not found' });
+
+    // Encrypted file delete karo storage se
+    const encryptedPath = path.join('uploads', file.encryptedName);
+    if (fs.existsSync(encryptedPath)) {
+      fs.unlinkSync(encryptedPath);
+    }
+
+    await file.deleteOne();
+    res.json({ message: 'File deleted successfully' });
+
+  } catch (err) {
+    res.status(500).json({ message: 'Error deleting file', error: err.message });
+  }
+};
+
+// Share link revoke karo
+exports.revokeLink = async (req, res) => {
+  try {
+    const file = await File.findOne({ _id: req.params.fileId, uploadedBy: req.user.id });
+    if (!file) return res.status(404).json({ message: 'File not found' });
+
+    file.isActive = false;
+    await file.save();
+
+    res.json({ message: 'Link revoked successfully' });
+  } catch (err) {
+    res.status(500).json({ message: 'Error revoking link', error: err.message });
+  }
+};
+
+// Dashboard stats
+exports.getStats = async (req, res) => {
+  try {
+    const files = await File.find({ uploadedBy: req.user.id });
+
+    const totalFiles = files.length;
+    const activeLinks = files.filter(f => f.isActive && f.shareToken).length;
+    const totalDownloads = files.reduce((sum, f) => sum + f.downloadCount, 0);
+
+    res.json({ totalFiles, activeLinks, totalDownloads });
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching stats', error: err.message });
+  }
+};
