@@ -6,7 +6,7 @@ const fileSchema = new mongoose.Schema({
   size: { type: Number, required: true },
   mimeType: { type: String, required: true },
   uploadedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  shareToken: { type: String, unique: true },
+  shareToken: { type: String, unique: true, sparse: true },
   expiresAt: { type: Date },
   downloadLimit: { type: Number, default: 1 },
   downloadCount: { type: Number, default: 0 },
