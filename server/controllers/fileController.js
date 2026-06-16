@@ -4,7 +4,7 @@ const { v4: uuidv4 } = require('uuid');
 const bcrypt = require('bcryptjs');
 const path = require('path');
 const fs = require('fs');
-const { encryptFile } = require('../utils/encryption');
+const { encryptFile, decryptFile } = require('../utils/encryption');
 
 exports.uploadFile = async (req, res) => {
   try {
@@ -73,5 +73,58 @@ exports.generateShareLink = async (req, res) => {
 
   } catch (err) {
     res.status(500).json({ message: 'Error generating link', error: err.message });
+  }
+};
+
+exports.downloadFile = async (req, res) => {
+  try {
+    const { token } = req.params;
+    const { password } = req.body;
+
+    // Token se file dhundo
+    const file = await File.findOne({ shareToken: token });
+    if (!file) return res.status(404).json({ message: 'Invalid link' });
+
+    // Link active hai?
+    if (!file.isActive) return res.status(400).json({ message: 'Link has been revoked' });
+
+    // Expiry check
+    if (file.expiresAt && new Date() > file.expiresAt) {
+      return res.status(400).json({ message: 'Link has expired' });
+    }
+
+    // Download limit check
+    if (file.downloadCount >= file.downloadLimit) {
+      return res.status(400).json({ message: 'Download limit reached' });
+    }
+
+    // Password check
+    if (file.password) {
+      if (!password) return res.status(401).json({ message: 'Password required' });
+      const isMatch = await bcrypt.compare(password, file.password);
+      if (!isMatch) return res.status(401).json({ message: 'Wrong password' });
+    }
+
+    // File decrypt karo
+    const encryptedPath = path.join('uploads', file.encryptedName);
+    const decryptedPath = path.join('uploads', `dec-${file.originalName}`);
+
+    await decryptFile(encryptedPath, decryptedPath);
+
+    // Download count update karo
+    file.downloadCount += 1;
+    await file.save();
+
+    // File bhejo user ko
+    res.download(decryptedPath, file.originalName, (err) => {
+      // Decrypted file delete karo
+      if (fs.existsSync(decryptedPath)) {
+        fs.unlinkSync(decryptedPath);
+      }
+      if (err) console.error('Download error:', err);
+    });
+
+  } catch (err) {
+    res.status(500).json({ message: 'Download failed', error: err.message });
   }
 };
