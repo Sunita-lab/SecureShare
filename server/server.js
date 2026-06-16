@@ -19,7 +19,9 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-// Routes (baad mein add karenge)
+// Routes 
+const authRoutes = require('./routes/authRoutes');
+app.use('/api/auth', authRoutes);
 app.get('/', (req, res) => {
   res.json({ message: 'SecureShare API running!' });
 });
