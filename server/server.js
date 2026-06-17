@@ -10,7 +10,7 @@ const app = express();
 
 // Security middleware
 app.use(helmet());
-app.use(cors({ origin: '*', credentials: false }));
+app.use(cors({ origin: 'https://secure-share-blond-xi.vercel.app', credentials: true }));
 app.use(express.json());
 
 // Rate limiting
