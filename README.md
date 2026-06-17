@@ -265,8 +265,8 @@ Multer's disk storage was used to write the uploaded file temporarily before enc
 
 ## 👩‍💻 Author
 
-**Namita**  
-Intern at **Xyzon Innovation**  
+**Sunita Satpathy**  
+Intern at **Xyzon Innovations Pvt Ltd**  
 Task 4 — Secure File Sharing System  
 Built: June 2026
 
