@@ -172,7 +172,7 @@ const UploadPage = () => {
 
             <div className="flex gap-4">
               <button
-                onClick={() => navigate('/dashboard', { state: { fileId: uploadedFile._id } })}
+                onClick={() => navigate('/share', { state: { fileId: uploadedFile._id } })}
                 className="flex-1 py-3 bg-gradient-to-r from-green-500 to-teal-500 text-white font-semibold rounded-2xl hover:from-green-600 hover:to-teal-600 transition-all glow-green shadow-lg"
               >
                 Generate Share Link →

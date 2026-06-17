@@ -52,6 +52,7 @@ exports.generateShareLink = async (req, res) => {
     const expiresAt = new Date(Date.now() + (expiryMap[expiresIn] || expiryMap['24h']));
 
     // Password hash karo agar diya ho
+    if (!password) return res.status(400).json({ message: 'Password is required' });
     let hashedPassword = null;
     if (password) {
       hashedPassword = await bcrypt.hash(password, 10);
