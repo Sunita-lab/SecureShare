@@ -1,4 +1,4 @@
-# 🔐 SecureShare
+# 🔐 CipherSend
 
 > **Built during Internship at Xyzon Innovation — Task 4**
 
@@ -11,7 +11,7 @@ A full-stack encrypted file sharing web application where users can upload files
 
 ## 📌 About This Project
 
-SecureShare was built as **Task 4** during an internship at **Xyzon Innovation**. The goal was to design and implement a production-ready secure file sharing system from scratch — covering backend architecture, cryptography, access control, and a polished frontend UI.
+CipherSend was built as **Task 4** during an internship at **Xyzon Innovation**. The goal was to design and implement a production-ready secure file sharing system from scratch — covering backend architecture, cryptography, access control, and a polished frontend UI.
 
 The project was built over 3 days:
 - **Day 1** — Full backend (Auth, Upload, Encryption, Share Links, Download, Dashboard API, Cleanup)
@@ -55,7 +55,7 @@ The project was built over 3 days:
 ## 🗂️ Project Structure
 
 ```
-secureshare/
+CipherSend/
 ├── server/                    # Backend
 │   ├── config/
 │   │   └── multer.js          # File upload config
@@ -140,8 +140,8 @@ secureshare/
 
 ```bash
 # Clone the repo
-git clone https://github.com/Sunita-lab/SecureShare
-cd SecureShare/server
+git clone https://github.com/Sunita-lab/CipherSend
+cd CipherSend/server
 
 # Install dependencies
 npm install
@@ -157,7 +157,7 @@ npm run dev
 **`.env` file:**
 ```env
 PORT=5000
-MONGO_URI=mongodb+srv://username:password@cluster0.xxxxx.mongodb.net/secureshare
+MONGO_URI=mongodb+srv://username:password@cluster0.xxxxx.mongodb.net/secureshare?retryWrites=true&w=majority    
 JWT_SECRET=your_super_secret_key_here
 ENCRYPTION_KEY=your_exactly_32_character_key_here
 FRONTEND_URL=http://localhost:5173

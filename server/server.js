@@ -28,7 +28,7 @@ const fileRoutes = require('./routes/fileRoutes');
 app.use('/api/files', fileRoutes);
 
 app.get('/', (req, res) => {
-  res.json({ message: 'SecureShare API running!' });
+  res.json({ message: 'CipherSend API running!' });
 });
 
 // MongoDB connect

@@ -21,7 +21,7 @@ const LandingPage = () => {
             <Shield className="w-5 h-5 text-white" />
           </div>
           <span className="text-xl font-bold bg-gradient-to-r from-green-600 to-teal-600 bg-clip-text text-transparent">
-            SecureShare
+            CipherSend
           </span>
         </div>
         <div className="flex items-center gap-4">
@@ -165,7 +165,7 @@ const LandingPage = () => {
               securely?
             </span>
           </h2>
-          <p className="text-gray-600 mb-8">Join SecureShare — free, fast, and fully encrypted.</p>
+          <p className="text-gray-600 mb-8">Join CipherSend — free, fast, and fully encrypted.</p>
           <button
             onClick={() => navigate('/register')}
             className="px-8 py-4 bg-gradient-to-r from-green-500 to-teal-500 text-white font-semibold rounded-2xl hover:from-green-600 hover:to-teal-600 transition-all glow-green shadow-xl text-lg"
@@ -177,7 +177,7 @@ const LandingPage = () => {
 
       {/* Footer */}
       <footer className="relative z-10 text-center pb-8 text-gray-500 text-sm">
-        Built with 💚 — SecureShare © 2026
+        Built with 💚 — CipherSend © 2026
       </footer>
 
     </div>

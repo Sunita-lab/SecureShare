@@ -49,7 +49,7 @@ const LoginPage = () => {
               <Shield className="w-6 h-6 text-white" />
             </div>
             <span className="text-2xl font-bold bg-gradient-to-r from-green-600 to-teal-600 bg-clip-text text-transparent">
-              SecureShare
+              CipherSend
             </span>
           </div>
           <h1 className="text-3xl font-bold text-gray-800">Welcome back</h1>

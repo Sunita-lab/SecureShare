@@ -97,7 +97,7 @@ const DashboardPage = () => {
             <Shield className="w-5 h-5 text-white" />
           </div>
           <span className="text-xl font-bold bg-gradient-to-r from-green-600 to-teal-600 bg-clip-text text-transparent">
-            SecureShare
+            CipherSend
           </span>
         </div>
         <div className="flex items-center gap-4">
