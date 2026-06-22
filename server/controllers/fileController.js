@@ -4,7 +4,8 @@ const { v4: uuidv4 } = require('uuid');
 const bcrypt = require('bcryptjs');
 const path = require('path');
 const fs = require('fs');
-const { encryptFile, decryptFile } = require('../utils/encryption');
+const { encryptFile, decryptFile, uploadToGridFS, downloadFromGridFS, deleteFromGridFS } = require('../utils/encryption');
+const axios = require('axios');
 
 exports.uploadFile = async (req, res) => {
   try {
@@ -18,6 +19,10 @@ exports.uploadFile = async (req, res) => {
     await encryptFile(uploadedPath, encryptedPath);
     // Remove the original unencrypted file
     fs.unlinkSync(uploadedPath);
+    // Upload the encrypted file to GridFS
+    await uploadToGridFS(encryptedPath, encryptedFileName);
+    // Remove the encrypted file from local storage
+    fs.unlinkSync(encryptedPath);
     const file = await File.create({
       originalName: req.file.originalname,
       encryptedName: encryptedFileName,
@@ -26,7 +31,7 @@ exports.uploadFile = async (req, res) => {
       uploadedBy: req.user.id
     });
 
-    res.status(201).json({ message: 'File uploaded!', file });
+    res.status(201).json({ message: 'File uploaded and encrypted!', file });
 
   } catch (err) {
     res.status(500).json({ message: 'Upload failed', error: err.message });
@@ -106,11 +111,18 @@ exports.downloadFile = async (req, res) => {
       if (!isMatch) return res.status(401).json({ message: 'Wrong password' });
     }
 
-    // File decrypt karo
+    // GridFS se encrypted file download karo
     const encryptedPath = path.join('uploads', file.encryptedName);
     const decryptedPath = path.join('uploads', `dec-${file.originalName}`);
 
+    // GridFS se file fetch karo local mein
+    await downloadFromGridFS(file.encryptedName, encryptedPath);
+
+    // Decrypt karo
     await decryptFile(encryptedPath, decryptedPath);
+
+    // Local encrypted copy delete karo
+    fs.unlinkSync(encryptedPath);
 
     // Download count update karo
     file.downloadCount += 1;
@@ -145,12 +157,8 @@ exports.deleteFile = async (req, res) => {
   try {
     const file = await File.findOne({ _id: req.params.fileId, uploadedBy: req.user.id });
     if (!file) return res.status(404).json({ message: 'File not found' });
-
-    // Delete encrypted file from storage
-    const encryptedPath = path.join('uploads', file.encryptedName);
-    if (fs.existsSync(encryptedPath)) {
-      fs.unlinkSync(encryptedPath);
-    }
+    //Delete from GridFS
+    await deleteFromGridFS(file.encryptedName);
 
     await file.deleteOne();
     res.json({ message: 'File deleted successfully' });

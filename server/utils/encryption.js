@@ -56,3 +56,47 @@ exports.decryptFile = (inputPath, outputPath) => {
     input.on('error', reject);
   });
 };
+
+const { getBucket } = require('../config/gridfs');
+const { Readable } = require('stream');
+
+exports.uploadToGridFS = (filePath, fileName) => {
+  return new Promise((resolve, reject) => {
+    const bucket = getBucket();
+    const readStream = require('fs').createReadStream(filePath);
+    const uploadStream = bucket.openUploadStream(fileName);
+    
+    readStream.pipe(uploadStream);
+    
+    uploadStream.on('finish', () => resolve(uploadStream.id));
+    uploadStream.on('error', reject);
+  });
+};
+
+exports.downloadFromGridFS = (fileName, destPath) => {
+  return new Promise((resolve, reject) => {
+    const bucket = getBucket();
+    const writeStream = require('fs').createWriteStream(destPath);
+    const downloadStream = bucket.openDownloadStreamByName(fileName);
+    
+    downloadStream.pipe(writeStream);
+    
+    writeStream.on('finish', resolve);
+    writeStream.on('error', reject);
+    downloadStream.on('error', reject);
+  });
+};
+
+exports.deleteFromGridFS = async (fileName) => {
+  const bucket = getBucket();
+  const files = await bucket.find({ filename: fileName }).toArray();
+  if (files.length > 0) {
+    await bucket.delete(files[0]._id);
+  }
+};
+
+
+    
+
+
+

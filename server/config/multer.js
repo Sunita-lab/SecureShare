@@ -1,7 +1,7 @@
 const multer = require('multer');
-const path = require('path');
 const fs = require('fs');
 
+// Temporary local storage — will be deleted after uploading to Cloudinary
 if (!fs.existsSync('uploads')) {
   fs.mkdirSync('uploads');
 }
@@ -11,20 +11,14 @@ const storage = multer.diskStorage({
     cb(null, 'uploads/');
   },
   filename: (req, file, cb) => {
-    const uniqueName = `${Date.now()}-${Math.round(Math.random() * 1e9)}${path.extname(file.originalname)}`;
+    const uniqueName = `${Date.now()}-${Math.round(Math.random() * 1e9)}${require('path').extname(file.originalname)}`;
     cb(null, uniqueName);
   }
 });
 
-const fileFilter = (req, file, cb) => {
-  // 10MB limit
-  cb(null, true);
-};
-
 const upload = multer({
   storage,
   limits: { fileSize: 10 * 1024 * 1024 },
-  fileFilter
 });
 
 module.exports = upload;
